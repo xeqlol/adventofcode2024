@@ -40,20 +40,20 @@ function solve(input) {
     let y = map[x].findIndex((column) => column === "^");
     let dx = -1;
     let dy = 0;
+    // first position
+    visited[x][y] = true;
 
     while (!isStepOutsideOfMap(x, y, dx, dy, map)) {
         if (canStepForward(x, y, dx, dy, map)) {
-            visited[x][y] = true;
             console.log("step forward", x, y);
             x += dx;
             y += dy;
+            visited[x][y] = true;
         } else {
             [dx, dy] = rotate90Right(dx, dy);
             console.log("rotate", dx, dy);
         }
     }
-
-    visited[x][y] = true; // last position
 
     const result = visited.flat(2).filter((x) => Boolean(x)).length;
 

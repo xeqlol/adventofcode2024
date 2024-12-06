@@ -1,7 +1,7 @@
 const { readInput, writeOutput } = require("../../utils");
 
 function canStepForward(x, y, dx, dy, map) {
-    return map[x + dx][y + dy] !== "#";
+    return map[x + dx][y + dy] !== "#" && map[x + dx][y + dy] !== "O";
 }
 
 function isStepOutsideOfMap(x, y, dx, dy, map) {
@@ -31,31 +31,54 @@ function rotate90Right(dx, dy) {
     }
 }
 
-function solve(input) {
-    const map = input.split("\n").map((row) => row.split(""));
-    console.log(map);
+function isCycled(map) {
     const visited = new Array(map.length).fill(0).map(() => new Array(map[0].length).fill(0));
     // start position
     let x = map.findIndex((row) => row.includes("^"));
     let y = map[x].findIndex((column) => column === "^");
     let dx = -1;
     let dy = 0;
+    // first position
+    visited[x][y] += 1;
 
     while (!isStepOutsideOfMap(x, y, dx, dy, map)) {
         if (canStepForward(x, y, dx, dy, map)) {
-            visited[x][y] = true;
-            console.log("step forward", x, y);
             x += dx;
             y += dy;
+            if (visited[x][y] > 10) {
+                return true;
+            }
+
+            visited[x][y] += 1;
         } else {
             [dx, dy] = rotate90Right(dx, dy);
-            console.log("rotate", dx, dy);
         }
     }
 
-    visited[x][y] = true; // last position
+    return false;
+}
 
-    const result = visited.flat(2).filter((x) => Boolean(x)).length;
+function solve(input) {
+    const map = input.split("\n").map((row) => row.split(""));
+    let result = 0;
+
+    for (let i = 0; i < map.length; i++) {
+        for (let j = 0; j < map.length; j++) {
+            if (map[i][j] === "#" || map[i][j] === "^") {
+                continue;
+            }
+
+            console.log("map variant for", i, j);
+            const newMap = JSON.parse(JSON.stringify(map));
+            newMap[i][j] = "O";
+            const isMapCycled = isCycled(newMap);
+            console.log("map ", i, j, "is cycled", isMapCycled);
+
+            if (isMapCycled) {
+                result += 1;
+            }
+        }
+    }
 
     return result;
 }
