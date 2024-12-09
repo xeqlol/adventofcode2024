@@ -20,11 +20,11 @@ function solve(input) {
     let rightIndex = data.length - 1;
 
     while (rightIndex >= 0) {
-        if (data[rightIndex].data.startsWith(".")) {
+        if (data[rightIndex].id === -1) {
             rightIndex--;
         } else {
             const placeToPasteIndex = data.findIndex(
-                (value) => value.data.startsWith(".") && value.data.length >= data[rightIndex].data.length
+                (value) => value.id === -1 && value.data.length >= data[rightIndex].data.length
             );
 
             if (placeToPasteIndex === -1 || placeToPasteIndex >= rightIndex) {
